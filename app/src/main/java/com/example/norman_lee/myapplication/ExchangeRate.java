@@ -24,10 +24,12 @@ public class ExchangeRate {
     }
 
     ExchangeRate(String home, String foreign) {
-
         instantiateMathContext(DEFAULT_PRECISION);
+
         //TODO 3.13a The constructor initializes exchangeRate by calculating the exchangeRate
-        exchangeRate = new BigDecimal(defaultRate);
+        BigDecimal bdHome = new BigDecimal(home);
+        BigDecimal bdForeign = new BigDecimal(foreign);
+        exchangeRate = bdHome.divide(bdForeign, mathContext);
     }
 
     BigDecimal getExchangeRate(){

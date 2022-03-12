@@ -1,5 +1,6 @@
 package com.example.norman_lee.myapplication;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,8 +41,14 @@ public class SubActivity extends AppCompatActivity {
                 String b = editTextSubValueOfB.getText().toString();
 
                 //TODO 3.9 Check that these values are valid --> See the Utils class
+                Utils.checkInvalidInputs(b);
 
                 //TODO 3.10 Set up an explicit intent and pass the exchange rate back to MainActivity
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("home", a);
+                intent.putExtra("foreign", b);
+                startActivity(intent);
+
                 //TODO 3.11 Decide how you are going to handle a divide-by-zero situation or when negative numbers are entered
                 //TODO 3.12 Decide how you are going to handle a situation when the editText widgets are empty
             }

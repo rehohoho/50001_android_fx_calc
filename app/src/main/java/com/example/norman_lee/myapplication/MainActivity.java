@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextValue;
     TextView textViewResult;
     TextView textViewExchangeRate;
-    double exchangeRate;
+    ExchangeRate exchangeRate;
+//    double exchangeRate;
     public final String TAG = "MainActivity";
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.android.mainsharedprefs";
@@ -43,6 +44,16 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO 3.13 Get the intent, retrieve the values passed to it, and instantiate the ExchangeRate class
         //TODO 3.13a See ExchangeRate class --->
+        Intent inIntent = getIntent();
+        String inHome = inIntent.getStringExtra("home");
+        String inForeign = inIntent.getStringExtra("foreign");
+        if (inHome == null) {
+            exchangeRate = new ExchangeRate();
+        } else {
+            exchangeRate = new ExchangeRate(inHome, inForeign);
+        }
+        textViewExchangeRate = findViewById(R.id.textViewExchangeRate);
+        textViewExchangeRate.setText(exchangeRate.getExchangeRate().toString());
 
         //TODO 2.1 Use findViewById to get references to the widgets in the layout
         buttonConvert = findViewById(R.id.buttonConvert);
@@ -65,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 //TODO 2.5 If not, calculate the units of B with the exchange rate and display it
                 //TODO 2.5a See ExchangeRate class --->
                 else {
-                    final ExchangeRate exchangeRate = new ExchangeRate();
                     final BigDecimal res = exchangeRate.calculateAmount(exchangeRateStr);
                     textViewResult.setText(res.toString());
                 }
@@ -75,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         //TODO 3.1 Modify the Android Manifest to specify that the parent of SubActivity is MainActivity
         //TODO 3.2 Get a reference to the Set Exchange Rate Button
         buttonSetExchangeRate = findViewById(R.id.buttonSetExchangeRate);
-        textViewExchangeRate = findViewById(R.id.textViewExchangeRate);
         //TODO 3.3 Set up setOnClickListener for this
         buttonSetExchangeRate.setOnClickListener(new View.OnClickListener() {
             @Override
