@@ -2,6 +2,7 @@ package com.example.norman_lee.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -140,6 +141,16 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_set_exchange_rate) {
             Intent intent = new Intent(getApplicationContext(), SubActivity.class);
             startActivity(intent);
+        }
+        if (id == R.id.action_map) {
+            Uri.Builder builder = new Uri.Builder()
+                .scheme("geo").opaquePart("0.0").appendQueryParameter("q", getString(R.string.main_default_location));
+            Uri geoLocation = builder.build();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(geoLocation);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
