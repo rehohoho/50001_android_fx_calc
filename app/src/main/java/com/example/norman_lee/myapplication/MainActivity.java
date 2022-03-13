@@ -27,11 +27,12 @@ public class MainActivity extends AppCompatActivity {
     TextView textViewResult;
     TextView textViewExchangeRate;
     ExchangeRate exchangeRate;
-//    double exchangeRate;
+
     public final String TAG = "MainActivity";
     private SharedPreferences mPreferences;
-    private String sharedPrefFile = "com.example.android.mainsharedprefs";
+    private final String sharedPrefFile = "com.example.android.mainsharedprefs";
     public static final String RATE_KEY = "Rate_Key";
+    public static final String EDIT_TEXT_KEY = "Edit_Text_Key";
 
 
     @Override
@@ -40,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //TODO 4.5 Get a reference to the sharedPreferences object
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         //TODO 4.6 Retrieve the value using the key, and set a default when there is none
+        String exchangeRateStr = mPreferences.getString(RATE_KEY, "2.95");
+        String editTextStr = mPreferences.getString(EDIT_TEXT_KEY, "2.95");
 
         //TODO 3.13 Get the intent, retrieve the values passed to it, and instantiate the ExchangeRate class
         //TODO 3.13a See ExchangeRate class --->
@@ -48,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         String inHome = inIntent.getStringExtra("home");
         String inForeign = inIntent.getStringExtra("foreign");
         if (inHome == null) {
-            exchangeRate = new ExchangeRate();
+            exchangeRate = new ExchangeRate(exchangeRateStr);
         } else {
             exchangeRate = new ExchangeRate(inHome, inForeign);
         }
         textViewExchangeRate = findViewById(R.id.textViewExchangeRate);
-        textViewExchangeRate.setText(exchangeRate.getExchangeRate().toString());
+        textViewExchangeRate.setText(String.format("%s", exchangeRate.getExchangeRate()));
 
         //TODO 2.1 Use findViewById to get references to the widgets in the layout
         buttonConvert = findViewById(R.id.buttonConvert);
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         textViewResult = findViewById(R.id.textViewResult);
 
         //TODO 2.2 Assign a default exchange rate of 2.95 to the textView
-        editTextValue.setText("2.95");
+        editTextValue.setText(editTextStr);
 
         //TODO 2.3 Set up setOnClickListener for the Convert Button
         buttonConvert.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO 2.5a See ExchangeRate class --->
                 else {
                     final BigDecimal res = exchangeRate.calculateAmount(exchangeRateStr);
-                    textViewResult.setText(res.toString());
+                    textViewResult.setText(String.format("%s", res));
                 }
             }
         });
@@ -133,17 +137,22 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if (id == R.id.action_set_exchange_rate) {
+            Intent intent = new Intent(getApplicationContext(), SubActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
     //TODO 4.3 override the methods in the Android Activity Lifecycle here
     //TODO 4.4 for each of them, write a suitable string to display in the Logcat
 
-    //TODO 4.7 In onPause, get a reference to the SharedPreferences.Editor object
-    //TODO 4.8 store the exchange rate using the putString method with a key
-
-
+    /**
+     * Open app: create, start, resume
+     * Change app: pause, stop
+     * Rotate: pause, stop, destroy, create, start, resume
+     *   Refires same intent (fx rate same, keeps user data, resets UI)
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -156,10 +165,17 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onResume");
     }
 
+    //TODO 4.7 In onPause, get a reference to the SharedPreferences.Editor object
+    //TODO 4.8 store the exchange rate using the putString method with a key
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause");
+
+        SharedPreferences.Editor editor = mPreferences.edit(); // builder
+        editor.putString(RATE_KEY, exchangeRate.getExchangeRate().toString());
+        editor.putString(EDIT_TEXT_KEY, editTextValue.getText().toString());
+        editor.apply();
     }
 
     @Override
