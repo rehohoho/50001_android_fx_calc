@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Open app: create, start, resume
      * Change app: pause, stop
+     * Back to activity: (destroy), start, resume
      * Rotate: pause, stop, destroy, create, start, resume
      *   Refires same intent (fx rate same, keeps user data, resets UI)
      */
